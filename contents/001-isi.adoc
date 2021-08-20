@@ -1,0 +1,116 @@
+
+== Data Asal 
+
+Basis data dengan _schema_ PBB pada sistem basis data Oracle.
+
+== Kegiatan Manipulasi Yang Dilakukan
+
+Melakukan pengambilan data dan memberikan perbandingan antara objek pajak dengan bangunan berjenis perumahan, objek pajak dengan bangunan dengan jenis apapun, dan seluruh objek pajak terdaftar.
+
+== Hasil Manipulasi
+
+Hasil manipulasi data dapat diakses pada alamat https://docs.google.com/spreadsheets/d/17QAtj4mngdHSmN-LS1yPqUpttRemYsycJuoJDNGOiXI/edit?usp=sharing
+
+== _Script_ atau _command_ yang Digunakan Untuk Melakukan Manipulasi
+
+=== _Inquiry_ Data Jumlah Objek Dengan Jenis Perumahan
+
+----
+select sppt.kd_kecamatan||'-'||kec.nm_kecamatan kecamatan, 
+  sppt.kd_kelurahan||'-'||kel.nm_kelurahan desa, 
+  count(sppt.kd_dati2)
+from sppt
+join ref_kecamatan kec on (
+  kec.kd_propinsi = sppt.kd_propinsi and
+  kec.kd_dati2 = sppt.kd_dati2 and
+  kec.kd_kecamatan = sppt.kd_kecamatan
+)
+join ref_kelurahan kel on (
+  kel.kd_propinsi = sppt.kd_propinsi and
+  kel.kd_dati2 = sppt.kd_dati2 and
+  kel.kd_kecamatan = sppt.kd_kecamatan and
+  kel.kd_kelurahan = sppt.kd_kelurahan
+)
+join dat_op_bangunan bng on (
+  bng.kd_propinsi = sppt.kd_propinsi and
+  bng.kd_dati2 = sppt.kd_dati2 and
+  bng.kd_kecamatan = sppt.kd_kecamatan and
+  bng.kd_kelurahan = sppt.kd_kelurahan and
+  bng.kd_blok = sppt.kd_blok and
+  bng.no_urut = sppt.no_urut and
+  bng.kd_jns_op = sppt.kd_jns_op
+)
+where sppt.thn_pajak_sppt='2021'
+  and sppt.status_pembayaran_sppt in ('0','1')
+  and bng.kd_jpb = '01'
+  and sppt.luas_bng_sppt > 0
+group by sppt.kd_kecamatan, kec.nm_kecamatan, sppt.kd_kelurahan, kel.nm_kelurahan
+order by sppt.kd_kecamatan, sppt.kd_kelurahan
+----
+
+=== _Inquiry_ Data Jumlah Objek Yang Memiliki Bangunan
+
+----
+select sppt.kd_kecamatan||'-'||kec.nm_kecamatan kecamatan, 
+  sppt.kd_kelurahan||'-'||kel.nm_kelurahan desa, 
+  count(sppt.kd_dati2)
+from sppt
+join ref_kecamatan kec on (
+  kec.kd_propinsi = sppt.kd_propinsi and
+  kec.kd_dati2 = sppt.kd_dati2 and
+  kec.kd_kecamatan = sppt.kd_kecamatan
+)
+join ref_kelurahan kel on (
+  kel.kd_propinsi = sppt.kd_propinsi and
+  kel.kd_dati2 = sppt.kd_dati2 and
+  kel.kd_kecamatan = sppt.kd_kecamatan and
+  kel.kd_kelurahan = sppt.kd_kelurahan
+)
+join dat_op_bangunan bng on (
+  bng.kd_propinsi = sppt.kd_propinsi and
+  bng.kd_dati2 = sppt.kd_dati2 and
+  bng.kd_kecamatan = sppt.kd_kecamatan and
+  bng.kd_kelurahan = sppt.kd_kelurahan and
+  bng.kd_blok = sppt.kd_blok and
+  bng.no_urut = sppt.no_urut and
+  bng.kd_jns_op = sppt.kd_jns_op
+)
+where sppt.thn_pajak_sppt='2021'
+  and sppt.status_pembayaran_sppt in ('0','1')
+  and sppt.luas_bng_sppt > 0
+group by sppt.kd_kecamatan, kec.nm_kecamatan, sppt.kd_kelurahan, kel.nm_kelurahan
+order by sppt.kd_kecamatan, sppt.kd_kelurahan
+----
+
+=== _Inquiry_ Data Jumlah Seluruh Objek Pajak
+
+----
+select sppt.kd_kecamatan||'-'||kec.nm_kecamatan kecamatan, 
+  sppt.kd_kelurahan||'-'||kel.nm_kelurahan desa, 
+  count(sppt.kd_dati2)
+from sppt
+join ref_kecamatan kec on (
+  kec.kd_propinsi = sppt.kd_propinsi and
+  kec.kd_dati2 = sppt.kd_dati2 and
+  kec.kd_kecamatan = sppt.kd_kecamatan
+)
+join ref_kelurahan kel on (
+  kel.kd_propinsi = sppt.kd_propinsi and
+  kel.kd_dati2 = sppt.kd_dati2 and
+  kel.kd_kecamatan = sppt.kd_kecamatan and
+  kel.kd_kelurahan = sppt.kd_kelurahan
+)
+join dat_op_bangunan bng on (
+  bng.kd_propinsi = sppt.kd_propinsi and
+  bng.kd_dati2 = sppt.kd_dati2 and
+  bng.kd_kecamatan = sppt.kd_kecamatan and
+  bng.kd_kelurahan = sppt.kd_kelurahan and
+  bng.kd_blok = sppt.kd_blok and
+  bng.no_urut = sppt.no_urut and
+  bng.kd_jns_op = sppt.kd_jns_op
+)
+where sppt.thn_pajak_sppt='2021'
+  and sppt.status_pembayaran_sppt in ('0','1')
+group by sppt.kd_kecamatan, kec.nm_kecamatan, sppt.kd_kelurahan, kel.nm_kelurahan
+order by sppt.kd_kecamatan, sppt.kd_kelurahan
+----
